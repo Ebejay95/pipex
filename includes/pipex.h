@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:52 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/03 14:35:50 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/03 20:49:09 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
+# include <fcntl.h>
 # include "./../libft/libft.h"
 
 #endif

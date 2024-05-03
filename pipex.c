@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/03 17:37:58 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/03 21:32:38 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,23 +88,47 @@
 //		ft_printf("\n");
 //	return (0);
 //}
-int	validate_args(int argc)
+
+int	get_input(char *filename, char *filecontent)
 {
-	//char *input;
-	//char *output;
-	//char *command1;
-	//char *command2;
+	int		fd;
+	char	*line;
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+	{
+		free(*filecontent);
+		return (0);
+	}
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (line == NULL)
+		{
+			filename = *filecontent;
+			close(fd);
+			return (1);
+		}
+		*filecontent = ft_strjoin(*filecontent, line);
+		if (*filecontent == NULL)
+			return (0);
+		free(line);
+	}
+	return (0);
+}
 
-
+int	process_args(int argc, char **argv, char *inputfilecontent)
+{
 	if (argc != 5)
 	{
 		ft_printf("args must follow the order: [inputfile] [comand1] [command2] [outputfile]\n");
 		return (1);
 	}
-	//input = argv[1];
-	//output = argv[2];
-	//command1 = argv[3];
-	//command2 = argv[4];
+	if (get_input(argv[1], &inputfilecontent) == 0)
+	{
+		ft_printf("\033[31m[inputfile]: %s - does not exist, or cannot be read from\033[0m\n", argv[1]);
+		return (1);
+	}
+	ft_printf("RETRUN: %s\n", argv[1]);
 	return (0);
 }
 
@@ -124,11 +148,15 @@ void	perform_pipex(char **argv)
 	ft_printf("\toutput: %s\n", output);
 	ft_printf("\tcommand1: %s\n", command1);
 	ft_printf("\tcommand2: %s\n", command2);
+
 }
 
 int main(int argc, char **argv)
 {
-	if(validate_args(argc) == 1)
+	char *inputfilecontent;
+
+	inputfilecontent = NULL;
+	if(process_args(argc, argv, inputfilecontent) == 1)
 		return (0);
 	perform_pipex(argv);
 	return (0);
