@@ -6,7 +6,7 @@
 #    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/27 18:59:48 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/03 14:01:44 by jeberle          ###   ########.fr        #
+#    Updated: 2024/05/03 17:21:21 by jeberle          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,6 +51,7 @@ clean:
 	@echo "\033[31mobjects deleted\033[0m"
 
 fclean: clean
+	@rm -rf $(NAME)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
 	@echo "\033[31mpipex deleted\033[0m"
 

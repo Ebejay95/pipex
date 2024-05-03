@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/03 16:56:36 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/03 17:37:58 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,35 +34,33 @@
 //	return (0);
 //}
 
-int	main (void)
-{
-	int id;
-	int status;
-	int fd[2];
-	pipe(fd);
-	id = fork();
-	if(id == 0)
-	{
-		close(fd[0]);
-		int x;
-		printf("Input a number: ");
-		scanf("%d", &x);
-		write(fd[1], &x, sizeof(int));
-		close(fd[1]);
-	}
-	else
-	{
-		int y;
-		close(fd[1]);
-		wait(&status);
-		read(fd[0], &y, sizeof(int));
-		close(fd[1]);
-		printf("U entered number: %i\n", y);
-	}
-	return (0);
-}
-
-
+//int	main (void)
+//{
+//	int id;
+//	int status;
+//	int fd[2];
+//	pipe(fd);
+//	id = fork();
+//	if(id == 0)
+//	{
+//		close(fd[0]);
+//		int x;
+//		printf("Input a number: ");
+//		scanf("%d", &x);
+//		write(fd[1], &x, sizeof(int));
+//		close(fd[1]);
+//	}
+//	else
+//	{
+//		int y;
+//		close(fd[1]);
+//		wait(&status);
+//		read(fd[0], &y, sizeof(int));
+//		close(fd[1]);
+//		printf("U entered number: %i\n", y);
+//	}
+//	return (0);
+//}
 
 //int	main (void)
 //{
@@ -90,7 +88,51 @@ int	main (void)
 //		ft_printf("\n");
 //	return (0);
 //}
+int	validate_args(int argc)
+{
+	//char *input;
+	//char *output;
+	//char *command1;
+	//char *command2;
 
+
+	if (argc != 5)
+	{
+		ft_printf("args must follow the order: [inputfile] [comand1] [command2] [outputfile]\n");
+		return (1);
+	}
+	//input = argv[1];
+	//output = argv[2];
+	//command1 = argv[3];
+	//command2 = argv[4];
+	return (0);
+}
+
+void	perform_pipex(char **argv)
+{
+	char *input;
+	char *output;
+	char *command1;
+	char *command2;
+
+	input = argv[1];
+	output = argv[2];
+	command1 = argv[3];
+	command2 = argv[4];
+	ft_printf("PIPEX:\n");
+	ft_printf("\tinput: %s\n", input);
+	ft_printf("\toutput: %s\n", output);
+	ft_printf("\tcommand1: %s\n", command1);
+	ft_printf("\tcommand2: %s\n", command2);
+}
+
+int main(int argc, char **argv)
+{
+	if(validate_args(argc) == 1)
+		return (0);
+	perform_pipex(argv);
+	return (0);
+}
 
 
 
