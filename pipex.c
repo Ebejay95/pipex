@@ -3,15 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/03 17:37:58 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/04 09:31:37 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/pipex.h"
 #include <stdio.h>
+
+char *get_file_content(char *filename)
+{
+	char	*filecontent;
+	char	*tmp;
+	char	*line;
+	int		fd;
+
+	filecontent = ft_strdup("");
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+	{
+		ft_printf("File %s does not exist, or cannot be read from\n", filename);
+		return (filecontent);
+	}
+	line = get_next_line(fd);
+	while (line != NULL)
+	{
+		tmp = ft_calloc(sizeof(char), (ft_strlen(line) + ft_strlen(filecontent) + 1));
+		if(tmp == NULL)
+		{
+			free(line);
+			close(fd);
+			return (filecontent);
+		}
+		ft_strcpy(tmp, filecontent);
+		ft_strcat(tmp, line);
+		free(filecontent);
+		tmp = filecontent;
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	return (filecontent);
+}
 
 //int main(int argc, char **argv)
 //{
@@ -120,7 +155,7 @@ void	perform_pipex(char **argv)
 	command1 = argv[3];
 	command2 = argv[4];
 	ft_printf("PIPEX:\n");
-	ft_printf("\tinput: %s\n", input);
+	ft_printf("\tinput: %s\n", get_file_content(input));
 	ft_printf("\toutput: %s\n", output);
 	ft_printf("\tcommand1: %s\n", command1);
 	ft_printf("\tcommand2: %s\n", command2);
