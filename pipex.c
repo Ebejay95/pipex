@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/04 15:37:27 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/04 17:43:00 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,26 +223,40 @@ int opener(char *filename)
 		if(access(filename, R_OK) != -1)
 		{
 			fd = open(filename, O_WRONLY | O_CREAT, 0644);
-			if(fd == -1)
-				perror("file opening failed\n");
 			return (fd);
 		}
-		else
-		{
-			perror("no rights to access file or not existing ");
-			return (-1);
-		}
+		return (-1);
 	}
-	perror("filename was not given or existing\n");
 	return (-1);
 }
 
-int main(int argc, char **argv)
+
+void	prtintenv(char **env)
+{
+	int	envdx;
+	char	*print;
+
+	envdx = 0;
+	while (env[envdx] != 0)
+	{
+		print = ft_color(env[envdx], YELLOW);
+		ft_printf(print);
+		ft_printf("\n");
+		free(print);
+		envdx++;
+	}
+}
+
+int main(int argc, char **argv, char **envp)
 {
 	int fd_in;
 	int fd_out;
 	int cmd_i;
+	//int	fd[2];
+	//int pid;
+	int prev_pfd;
 
+	prtintenv(envp);
 	if (argc < 5)
 	{
 		ft_printf("\033[31margs must follow the order: [inputfile] [comand1] ... [commandn] [outputfile]\033[0m\n");
@@ -251,20 +265,65 @@ int main(int argc, char **argv)
 	fd_in = opener(argv[1]);
 	fd_out = opener(argv[4]);
 	cmd_i = 2;
+	// unterstuetze auch den fall wenn kein inputfile existiert infile cat wc-l +> 0
 	ft_printf("%i %i\n", fd_in, fd_out);
 	if (fd_in >= 0 && fd_out >= 1)
 	{
+		prev_pfd = fd_in;
 		while (cmd_i < (argc - 1))
 		{
 			ft_printf("DO SHIT: %s\n", argv[cmd_i]);
-			perform_command(fd_in, fd_out, argv[cmd_i]);
+		//	if (pipe(fd) == -1)
+		//	{
+		//		perror("pipe");
+		//		exit(EXIT_FAILURE);
+		//	}
+		//	pid = fork();
+		//	if (pid == -1)
+		//	{
+		//		perror("fork");
+		//		exit(EXIT_FAILURE);
+		//	}
+		//	if (pid == 0)
+		//	{
+		//		dup2(prev_pfd, STDIN_FILENO);
+		//		if(cmd_i < argc - 2)
+		//			dup2(fd[1], STDOUT_FILENO);
+		//		else
+		//			dup2(fd_out, STDOUT_FILENO);
+		//		close(fd[0]);
+		//		close(fd[1]);
+
+
+//int main(void)
+//{
+//	char *args[3];
+//
+//	args[0] = "ls";
+//	args[1] = "-l";
+//	args[2] = NULL;
+//
+//	execve("/bin/ls", args, NULL);
+//	return (0);
+//}
+		execve(, array argv[1]);
+		//		perror("exec failed");
+		//		exit(EXIT_FAILURE);
+		//	}
+		//	close(fd[1]);
+		//	if (prev_pfd != fd_in)
+		//		close(prev_pfd);
+		//	prev_pfd = fd[0];
 			cmd_i++;
 		}
+		wait(NULL);
 	}
 	close(fd_in);
 	close(fd_out);
 	return (0);
 }
+
+// execute 
 
 
 //int main(int argc, char **argv)
@@ -293,17 +352,6 @@ int main(int argc, char **argv)
 //	return (0);
 //}
 
-//int main(void)
-//{
-//	char *args[3];
-//
-//	args[0] = "ls";
-//	args[1] = "-l";
-//	args[2] = NULL;
-//
-//	execve("/bin/ls", args, NULL);
-//	return (0);
-//}
 
 // int main(void)
 // {
