@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/03 21:32:38 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/04 12:38:00 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,12 +153,20 @@ void	perform_pipex(char **argv)
 
 int main(int argc, char **argv)
 {
-	char *inputfilecontent;
-
-	inputfilecontent = NULL;
-	if(process_args(argc, argv, inputfilecontent) == 1)
-		return (0);
-	perform_pipex(argv);
+	//char *inputfilecontent;
+//
+	//inputfilecontent = NULL;
+	//if(process_args(argc, argv, inputfilecontent) == 1)
+	//	return (0);
+	//perform_pipex(argv);
+	if(argc == 2)
+	{
+		int fd;
+	
+		fd = open(argv[1], O_WRONLY | O_CREAT, 0644);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
 	return (0);
 }
 
