@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/04 17:43:00 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/04 18:29:02 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,6 +247,57 @@ void	prtintenv(char **env)
 	}
 }
 
+char *ft_get_envline(char *needle, char **envp)
+{
+	int		envdx;
+	char	*pthl;
+	char	*pthl_start;
+
+	envdx = 0;
+	while (envp[envdx] != 0)
+	{
+		pthl_start = ft_strstr(envp[envdx], needle);
+		if (pthl_start == envp[envdx])
+		{
+			pthl = ft_calloc((ft_strlen(envp[envdx]) + 1), sizeof(char));
+			if(pthl == NULL)
+				return (NULL);
+			ft_strcpy(pthl, envp[envdx]);
+		}
+		envdx++;
+	}
+
+	return (pthl);
+}
+
+void	ft_exc_path(char *exc, char **envp)
+{
+	char *pathline;
+	char **paths;
+	int		pathcount;
+	int		i;
+
+	paths = NULL;
+	pathline = ft_get_envline("PATH", envp);
+	if(pathline != NULL)
+	{
+		i = 0;
+		pathcount = ft_count_words(pathline, ' ');
+		paths = ft_split(pathline, ' '); // pointer number... 
+		while (i < pathcount)
+		{
+			ft_printf(ft_color(pathline,GREEN));
+			ft_printf("\n");
+			ft_printf(ft_color(paths[i],BRIGHT_BLUE));
+			ft_printf("\n");
+			ft_printf(exc);
+			ft_printf("\n");
+			i++;
+		}
+	}
+	free(pathline);
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	int fd_in;
@@ -293,20 +344,17 @@ int main(int argc, char **argv, char **envp)
 		//			dup2(fd_out, STDOUT_FILENO);
 		//		close(fd[0]);
 		//		close(fd[1]);
+		//ft_exc_path(argv[cmd_i], envp);
+		//execve(ft_exc_path(argv[cmd_i], envp), ft_exc_args(argv[cmd_i]), envp);
 
+			char *args[3];
 
-//int main(void)
-//{
-//	char *args[3];
-//
-//	args[0] = "ls";
-//	args[1] = "-l";
-//	args[2] = NULL;
-//
-//	execve("/bin/ls", args, NULL);
-//	return (0);
-//}
-		execve(, array argv[1]);
+			args[0] = "echo";
+			args[1] = "Rustam is a cool guy!!";
+			args[2] = NULL;
+		execve("/local/bin/echo", args, NULL);
+
+		//execve(, array argv[1]);
 		//		perror("exec failed");
 		//		exit(EXIT_FAILURE);
 		//	}
