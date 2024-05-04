@@ -6,12 +6,13 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/04 12:38:00 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/04 15:37:27 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/pipex.h"
 #include <stdio.h>
+
 
 //int main(int argc, char **argv)
 //{
@@ -89,88 +90,318 @@
 //	return (0);
 //}
 
-int	get_input(char *filename, char *filecontent)
+//int	get_input(char *filename, char *filecontent)
+//{
+//	int		fd;
+//	char	*line;
+//	fd = open(filename, O_RDONLY);
+//	if (fd == -1)
+//	{
+//		free(*filecontent);
+//		return (0);
+//	}
+//	while (1)
+//	{
+//		line = get_next_line(fd);
+//		if (line == NULL)
+//		{
+//			filename = *filecontent;
+//			close(fd);
+//			return (1);
+//		}
+//		*filecontent = ft_strjoin(*filecontent, line);
+//		if (*filecontent == NULL)
+//			return (0);
+//		free(line);
+//	}
+//	return (0);
+//}
+
+//int	process_args(int argc, char **argv, char *inputfilecontent)
+//{
+//	if (argc != 5)
+//	{
+//		ft_printf("args must follow the order: [inputfile] [comand1] [command2] [outputfile]\n");
+//		return (1);
+//	}
+//	if (get_input(argv[1], &inputfilecontent) == 0)
+//	{
+//		ft_printf("\033[31m[inputfile]: %s - does not exist, or cannot be read from\033[0m\n", argv[1]);
+//		return (1);
+//	}
+//	ft_printf("RETRUN: %s\n", argv[1]);
+//	return (0);
+//}
+
+char *get_file_content(char *filename)
 {
-	int		fd;
+	char	*filecontent;
+	char	*tmp;
 	char	*line;
+	int		fd;
+
+	filecontent = ft_strdup("");
 	fd = open(filename, O_RDONLY);
-	if (fd == -1)
+	if (fd < 0)
 	{
-		free(*filecontent);
-		return (0);
+		ft_printf("File %s does not exist, or cannot be read from\n", filename);
+		return (filecontent);
 	}
-	while (1)
+	line = get_next_line(fd);
+	while (line != NULL)
 	{
-		line = get_next_line(fd);
-		if (line == NULL)
+		tmp = ft_calloc(sizeof(char), (ft_strlen(line) + ft_strlen(filecontent) + 1));
+		if(tmp == NULL)
 		{
-			filename = *filecontent;
+			free(line);
 			close(fd);
-			return (1);
+			return (filecontent);
 		}
-		*filecontent = ft_strjoin(*filecontent, line);
-		if (*filecontent == NULL)
-			return (0);
+		free(filecontent);
+		ft_strcpy(tmp, filecontent);
+		ft_strcat(tmp, line);
+		filecontent = tmp;
 		free(line);
+		line = get_next_line(fd);
 	}
-	return (0);
+	close(fd);
+	return (filecontent);
 }
 
-int	process_args(int argc, char **argv, char *inputfilecontent)
+//void	perform_pipex(char **argv)
+//{
+//	int	pid;
+//
+//	pid = fork();
+//
+//	if (pid == 0)
+//	{
+//
+//	}
+//	else
+//	{
+//		
+//	}
+//	//ft_printf("PIPEX:\n");
+//	//ft_printf("\tinput: %s\n", get_file_content(argv[1]));
+//	//ft_printf("\toutput: %s\n", argv[2]);
+//	//ft_printf("\tcommand1: %s\n", argv[3]);
+//	//ft_printf("\tcommand2: %s\n", argv[4]);
+//
+//}
+
+//int main(int argc, char **argv)
+//{
+//	//char *inputfilecontent;
+////
+//	//inputfilecontent = NULL;
+//	//if(process_args(argc, argv, inputfilecontent) == 1)
+//	//	return (0);
+//	if (argc != 5)
+//	{
+//		ft_printf("\033[31margs must follow the order: [inputfile] [comand1] [command2] [outputfile]\033[0m\n");
+//		return (1);
+//	}
+//	perform_pipex(argv);
+//	//if(argc == 2)
+//	//{
+//	//	int fd;
+//	//
+//	//	fd = open(argv[1], O_WRONLY | O_CREAT, 0644);
+//	//	dup2(fd, STDOUT_FILENO);
+//	//	close(fd);
+//	//}
+//	return (0);
+//}
+
+int opener(char *filename)
 {
-	if (argc != 5)
+	int	fd;
+
+	if(filename != NULL)
 	{
-		ft_printf("args must follow the order: [inputfile] [comand1] [command2] [outputfile]\n");
-		return (1);
+		if(access(filename, R_OK) != -1)
+		{
+			fd = open(filename, O_WRONLY | O_CREAT, 0644);
+			if(fd == -1)
+				perror("file opening failed\n");
+			return (fd);
+		}
+		else
+		{
+			perror("no rights to access file or not existing ");
+			return (-1);
+		}
 	}
-	if (get_input(argv[1], &inputfilecontent) == 0)
-	{
-		ft_printf("\033[31m[inputfile]: %s - does not exist, or cannot be read from\033[0m\n", argv[1]);
-		return (1);
-	}
-	ft_printf("RETRUN: %s\n", argv[1]);
-	return (0);
-}
-
-void	perform_pipex(char **argv)
-{
-	char *input;
-	char *output;
-	char *command1;
-	char *command2;
-
-	input = argv[1];
-	output = argv[2];
-	command1 = argv[3];
-	command2 = argv[4];
-	ft_printf("PIPEX:\n");
-	ft_printf("\tinput: %s\n", input);
-	ft_printf("\toutput: %s\n", output);
-	ft_printf("\tcommand1: %s\n", command1);
-	ft_printf("\tcommand2: %s\n", command2);
-
+	perror("filename was not given or existing\n");
+	return (-1);
 }
 
 int main(int argc, char **argv)
 {
-	//char *inputfilecontent;
-//
-	//inputfilecontent = NULL;
-	//if(process_args(argc, argv, inputfilecontent) == 1)
-	//	return (0);
-	//perform_pipex(argv);
-	if(argc == 2)
+	int fd_in;
+	int fd_out;
+	int cmd_i;
+
+	if (argc < 5)
 	{
-		int fd;
-	
-		fd = open(argv[1], O_WRONLY | O_CREAT, 0644);
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
+		ft_printf("\033[31margs must follow the order: [inputfile] [comand1] ... [commandn] [outputfile]\033[0m\n");
+		return (1);
 	}
+	fd_in = opener(argv[1]);
+	fd_out = opener(argv[4]);
+	cmd_i = 2;
+	ft_printf("%i %i\n", fd_in, fd_out);
+	if (fd_in >= 0 && fd_out >= 1)
+	{
+		while (cmd_i < (argc - 1))
+		{
+			ft_printf("DO SHIT: %s\n", argv[cmd_i]);
+			perform_command(fd_in, fd_out, argv[cmd_i]);
+			cmd_i++;
+		}
+	}
+	close(fd_in);
+	close(fd_out);
 	return (0);
 }
 
 
+//int main(int argc, char **argv)
+//{
+//	if(argc == 3)
+//	{
+//		int fd;
+//	
+//		fd = open(argv[1], O_WRONLY | O_CREAT, 0644);
+//		dup2(fd, STDOUT_FILENO);
+//		close(fd);
+//		ft_printf(argv[2]);
+//	}
+//	return (0);
+//}
 
+//int main(int argc, char **argv)
+//{
+//	if(argc == 2)
+//	{
+//		if(access(argv[1], R_OK) != -1)
+//			ft_printf("erse");
+//		else
+//			ft_printf("dsfds");
+//	}
+//	return (0);
+//}
+
+//int main(void)
+//{
+//	char *args[3];
+//
+//	args[0] = "ls";
+//	args[1] = "-l";
+//	args[2] = NULL;
+//
+//	execve("/bin/ls", args, NULL);
+//	return (0);
+//}
+
+// int main(void)
+// {
+// 	int	pid;
+
+// 	pid = fork();
+
+// 	if (pid == -1)
+// 	{
+// 		perror("fork");
+// 		exit(EXIT_FAILURE);
+// 	}
+
+// 	if (pid == 0)
+// 	{
+// 		ft_printf("child %i %i\n", pid, getpid());
+// 	}
+// 	else
+// 	{
+// 		ft_printf("main %i %i\n", pid, getpid());
+// 	}
+// 	return (0);
+// }
+
+// int main(void)
+// {
+// 	int	fd[2];
+// 	int pid;
+// 	char buffer[11];
+
+// 	if (pipe(fd) == -1)
+// 	{
+// 		perror("pipe");
+// 		exit(EXIT_FAILURE);
+// 	}
+
+// 	pid = fork();
+
+// 	if (pid == -1)
+// 	{
+// 		perror("fork");
+// 		exit(EXIT_FAILURE);
+// 	}
+
+// 	if (pid == 0)
+// 	{
+// 		close(fd[0]);
+// 		write(fd[1], "Hello parent!", 13);
+// 		close(fd[1]);
+// 		exit(EXIT_SUCCESS);
+// 	}
+// 	else
+// 	{
+// 		close(fd[1]);
+// 		read(fd[0], buffer, 13);
+// 		close(fd[0]);
+// 		printf("Message from child: '%s'\n", buffer);
+// 		exit(EXIT_SUCCESS);
+// 	}
+// 	return (0);
+// }
+
+// int main(int argc, char **argv)
+// {
+// 	if(argc == 2)
+// 	{
+// 		if(unlink(argv[1]) == 0)
+// 			ft_printf("file %s deleted", argv[1]);
+// 		else
+// 			ft_printf("Error deleting file %s", argv[1]);
+// 	}
+// 	return (0);
+// }
+
+//int main(void)
+//{
+//	int pid;
+//
+//	pid = fork();
+//	if (pid == -1)
+//	{
+//		perror("fork");
+//		exit(EXIT_FAILURE);
+//	}
+//
+//	if (pid == 0)
+//	{
+//		ft_printf("i am a child\n");
+//		sleep(2);
+//		exit(EXIT_SUCCESS);
+//	}
+//	else
+//	{
+//		ft_printf("i am a parent\n");
+//		wait(NULL);
+//		exit(EXIT_SUCCESS);
+//	}
+//	return (0);
+//}
 
 //ft_printf("\nWEXIT:%i WIFEXIT:%i", WEXITSTATUS(status), WIFEXITED(status));
