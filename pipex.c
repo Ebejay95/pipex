@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/04 18:29:02 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/04 22:40:47 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,7 +305,7 @@ int main(int argc, char **argv, char **envp)
 	int cmd_i;
 	//int	fd[2];
 	//int pid;
-	int prev_pfd;
+	//int prev_pfd;
 
 	prtintenv(envp);
 	if (argc < 5)
@@ -320,7 +320,7 @@ int main(int argc, char **argv, char **envp)
 	ft_printf("%i %i\n", fd_in, fd_out);
 	if (fd_in >= 0 && fd_out >= 1)
 	{
-		prev_pfd = fd_in;
+		//prev_pfd = fd_in;
 		while (cmd_i < (argc - 1))
 		{
 			ft_printf("DO SHIT: %s\n", argv[cmd_i]);
