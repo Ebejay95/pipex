@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/04 22:40:47 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/05 19:48:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,36 +266,83 @@ char *ft_get_envline(char *needle, char **envp)
 		}
 		envdx++;
 	}
-
+	while(*pthl != '=' && *pthl != '\0')
+	{
+		pthl++;
+	}
+	if (*pthl == '=')
+		pthl++;
 	return (pthl);
 }
 
-void	ft_exc_path(char *exc, char **envp)
+char	*ft_exc_path(char *exc, char **envp)
 {
 	char *pathline;
+	char *joined;
 	char **paths;
 	int		pathcount;
 	int		i;
+	int		j;
 
 	paths = NULL;
 	pathline = ft_get_envline("PATH", envp);
 	if(pathline != NULL)
 	{
 		i = 0;
-		pathcount = ft_count_words(pathline, ' ');
-		paths = ft_split(pathline, ' '); // pointer number... 
+		pathcount = ft_count_words(pathline, ':');
+		paths = ft_split(pathline, ':');
 		while (i < pathcount)
 		{
-			ft_printf(ft_color(pathline,GREEN));
-			ft_printf("\n");
-			ft_printf(ft_color(paths[i],BRIGHT_BLUE));
-			ft_printf("\n");
-			ft_printf(exc);
-			ft_printf("\n");
+			joined = ft_strjoin(paths[i], exc);
+			if(joined == NULL)
+				break ;
+			if (access(joined, X_OK) == 0) {
+				//free(pathline);
+				j = 0;
+				while (j < pathcount)
+				{
+					//free(paths[j]);
+					j--;
+				}
+				//free(paths);
+				return (joined);
+			}
 			i++;
+			//free(joined);
 		}
 	}
-	free(pathline);
+	if(paths != NULL)
+	{
+		j = 0;
+		while (j < pathcount)
+		{
+			//free(paths[j]);
+			j--;
+		}
+		//free(paths);
+	}
+	//free(pathline);
+	return (NULL);
+}
+
+char	*retrieve_bsc_command(char *full_command)
+{
+	char	*command;
+	char	*full_command_cpy;
+	int		command_len;
+	
+	command_len = 0;
+	while (*full_command == ' ' && *full_command != '\0')
+		full_command++;
+	full_command_cpy = full_command;
+	while (*full_command != ' ' && *full_command != '\0')
+	{
+		command_len++;
+		full_command++;
+	}
+	full_command_cpy[command_len] = '\0';
+	command = ft_strjoin("/", full_command_cpy);
+	return (command);
 }
 
 int main(int argc, char **argv, char **envp)
@@ -344,15 +391,21 @@ int main(int argc, char **argv, char **envp)
 		//			dup2(fd_out, STDOUT_FILENO);
 		//		close(fd[0]);
 		//		close(fd[1]);
-		//ft_exc_path(argv[cmd_i], envp);
+
+	//		char *args[3];
+ //
+	//args[0] = "ls";
+	//args[1] = "-l";
+	//args[2] = NULL;
+	//execve("/bin/ls", args, NULL);
+	//printf("This line will not be executed.\n");
+		ft_printf(retrieve_bsc_command(argv[cmd_i]));
+		ft_printf("\n");
+		ft_printf(ft_exc_path(retrieve_bsc_command(argv[cmd_i]), envp));
+		ft_printf("\n");
+		//free(command);
 		//execve(ft_exc_path(argv[cmd_i], envp), ft_exc_args(argv[cmd_i]), envp);
 
-			char *args[3];
-
-			args[0] = "echo";
-			args[1] = "Rustam is a cool guy!!";
-			args[2] = NULL;
-		execve("/local/bin/echo", args, NULL);
 
 		//execve(, array argv[1]);
 		//		perror("exec failed");
