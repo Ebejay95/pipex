@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/05 19:48:54 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/05 22:33:46 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -302,7 +302,7 @@ char	*ft_exc_path(char *exc, char **envp)
 				while (j < pathcount)
 				{
 					//free(paths[j]);
-					j--;
+					j++;
 				}
 				//free(paths);
 				return (joined);
@@ -317,7 +317,7 @@ char	*ft_exc_path(char *exc, char **envp)
 		while (j < pathcount)
 		{
 			//free(paths[j]);
-			j--;
+			j++;
 		}
 		//free(paths);
 	}
@@ -325,24 +325,41 @@ char	*ft_exc_path(char *exc, char **envp)
 	return (NULL);
 }
 
-char	*retrieve_bsc_command(char *full_command)
+char	*retrieve_bsc_command(char *full_command, char *prefix, char *suffix)
 {
+	char	*tmp;
 	char	*command;
 	char	*full_command_cpy;
 	int		command_len;
 	
-	command_len = 0;
 	while (*full_command == ' ' && *full_command != '\0')
 		full_command++;
-	full_command_cpy = full_command;
-	while (*full_command != ' ' && *full_command != '\0')
-	{
+	command_len = 0;
+	while (full_command[command_len] != ' ' && full_command[command_len] != '\0')
 		command_len++;
-		full_command++;
-	}
+	command_len++;
+	full_command_cpy = ft_calloc((command_len + 1), sizeof(char));
+	if(full_command_cpy == NULL)
+		return (NULL);
+	ft_strlcpy(full_command_cpy, full_command, command_len);
 	full_command_cpy[command_len] = '\0';
-	command = ft_strjoin("/", full_command_cpy);
+	tmp = ft_strjoin(prefix, full_command_cpy);
+	free(full_command_cpy);
+	if(tmp == NULL)
+		return (NULL);
+	command = ft_strjoin(tmp, suffix);
+	free(tmp);
 	return (command);
+}
+
+char	**ft_exc_args(char *full_command, char *command)
+{
+	if(command == "awk")
+		return ft_exc_args_awk(full_command);
+	else
+	{
+		
+	}
 }
 
 int main(int argc, char **argv, char **envp)
@@ -399,14 +416,21 @@ int main(int argc, char **argv, char **envp)
 	//args[2] = NULL;
 	//execve("/bin/ls", args, NULL);
 	//printf("This line will not be executed.\n");
-		ft_printf(retrieve_bsc_command(argv[cmd_i]));
+		ft_printf(retrieve_bsc_command(argv[cmd_i], "", ""));
 		ft_printf("\n");
-		ft_printf(ft_exc_path(retrieve_bsc_command(argv[cmd_i]), envp));
+		ft_printf(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "/", ""), envp));
 		ft_printf("\n");
+		// ft_exc_args(argv[cmd_i])
 		//free(command);
 		//execve(ft_exc_path(argv[cmd_i], envp), ft_exc_args(argv[cmd_i]), envp);
-
-
+		char** exargs = ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", ""));
+		int g = 0;
+		while (exargs[g] != 0)
+		{
+			ft_printf(exargs[g]);
+			ft_printf("\n");
+			g++;
+		}
 		//execve(, array argv[1]);
 		//		perror("exec failed");
 		//		exit(EXIT_FAILURE);
