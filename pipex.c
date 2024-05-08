@@ -3,135 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/05 22:33:46 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/08 16:29:06 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/pipex.h"
 #include <stdio.h>
-
-
-//int main(int argc, char **argv)
-//{
-//	int p1[2];
-//	if(pipe(p1) == -1)
-//		return (1);
-//	int id = fork();
-//	if (id == -1)
-//		return (1);
-//	if (pid == 0)
-//	{
-//		int x;
-//		if(read(p1[0, &x, sizeof(x)]) == -1)
-//			return (1);
-//		x = x * 4;
-//		if (write(p1[1], &x, sizeof(x)) == -1)
-//			return (1);
-//	}
-//	
-//	return (0);
-//}
-
-//int	main (void)
-//{
-//	int id;
-//	int status;
-//	int fd[2];
-//	pipe(fd);
-//	id = fork();
-//	if(id == 0)
-//	{
-//		close(fd[0]);
-//		int x;
-//		printf("Input a number: ");
-//		scanf("%d", &x);
-//		write(fd[1], &x, sizeof(int));
-//		close(fd[1]);
-//	}
-//	else
-//	{
-//		int y;
-//		close(fd[1]);
-//		wait(&status);
-//		read(fd[0], &y, sizeof(int));
-//		close(fd[1]);
-//		printf("U entered number: %i\n", y);
-//	}
-//	return (0);
-//}
-
-//int	main (void)
-//{
-//	int id;
-//	int n;
-//	int p;
-//	int status;
-//
-//	id = fork();
-//	if(id == 0)
-//		n = 1;
-//	else
-//		n = 6;
-//	p = n;
-//	if (id != 0)
-//		wait(&status);
-//	while (p < (n + 5))
-//	{
-//		ft_printf("%i ", p);
-//		p++;
-//		if (id == 0)
-//			exit(5);
-//	}
-//	if (id != 0)
-//		ft_printf("\n");
-//	return (0);
-//}
-
-//int	get_input(char *filename, char *filecontent)
-//{
-//	int		fd;
-//	char	*line;
-//	fd = open(filename, O_RDONLY);
-//	if (fd == -1)
-//	{
-//		free(*filecontent);
-//		return (0);
-//	}
-//	while (1)
-//	{
-//		line = get_next_line(fd);
-//		if (line == NULL)
-//		{
-//			filename = *filecontent;
-//			close(fd);
-//			return (1);
-//		}
-//		*filecontent = ft_strjoin(*filecontent, line);
-//		if (*filecontent == NULL)
-//			return (0);
-//		free(line);
-//	}
-//	return (0);
-//}
-
-//int	process_args(int argc, char **argv, char *inputfilecontent)
-//{
-//	if (argc != 5)
-//	{
-//		ft_printf("args must follow the order: [inputfile] [comand1] [command2] [outputfile]\n");
-//		return (1);
-//	}
-//	if (get_input(argv[1], &inputfilecontent) == 0)
-//	{
-//		ft_printf("\033[31m[inputfile]: %s - does not exist, or cannot be read from\033[0m\n", argv[1]);
-//		return (1);
-//	}
-//	ft_printf("RETRUN: %s\n", argv[1]);
-//	return (0);
-//}
 
 char *get_file_content(char *filename)
 {
@@ -168,51 +48,113 @@ char *get_file_content(char *filename)
 	return (filecontent);
 }
 
-//void	perform_pipex(char **argv)
-//{
-//	int	pid;
-//
-//	pid = fork();
-//
-//	if (pid == 0)
-//	{
-//
-//	}
-//	else
-//	{
-//		
-//	}
-//	//ft_printf("PIPEX:\n");
-//	//ft_printf("\tinput: %s\n", get_file_content(argv[1]));
-//	//ft_printf("\toutput: %s\n", argv[2]);
-//	//ft_printf("\tcommand1: %s\n", argv[3]);
-//	//ft_printf("\tcommand2: %s\n", argv[4]);
-//
-//}
+int	ft_array_length(char **array)
+{
+	int	length;
 
-//int main(int argc, char **argv)
-//{
-//	//char *inputfilecontent;
-////
-//	//inputfilecontent = NULL;
-//	//if(process_args(argc, argv, inputfilecontent) == 1)
-//	//	return (0);
-//	if (argc != 5)
-//	{
-//		ft_printf("\033[31margs must follow the order: [inputfile] [comand1] [command2] [outputfile]\033[0m\n");
-//		return (1);
-//	}
-//	perform_pipex(argv);
-//	//if(argc == 2)
-//	//{
-//	//	int fd;
-//	//
-//	//	fd = open(argv[1], O_WRONLY | O_CREAT, 0644);
-//	//	dup2(fd, STDOUT_FILENO);
-//	//	close(fd);
-//	//}
-//	return (0);
-//}
+	length = 0;
+	while (array[length] != NULL)
+		length++;
+	return (length);
+}
+
+void	ft_array_free(char **array)
+{
+	int	length;
+
+	if(array == NULL)
+		return ;
+	length = ft_array_length(array);
+	length--;
+	while (length >= 0 && array[length] != NULL)
+	{
+		free(array[length]);
+		length--;
+	}
+	free(array);
+}
+
+char** ft_exc_args_awk(char *full_command)
+{
+	int	i;
+	int	j;
+	int	spaceargsnumber;
+	char **spaceargs;
+	char **args;
+	char *tmp;
+	char *tmpjoin;
+	char *tail;
+
+	spaceargsnumber = ft_count_words(full_command, ' ');
+	spaceargs = ft_split(full_command, ' ');
+	if (spaceargs == NULL)
+		return (NULL);
+	args = malloc(spaceargsnumber * sizeof(char *));
+	if (args == NULL)
+	{
+		i = spaceargsnumber - 1;
+		while (i >= 0)
+		{
+			//free(spaceargs[i]);
+			i--;
+		}
+		//free(spaceargs);
+		return (NULL);
+	}
+	i = 0;
+	j = 0;
+	while (i < spaceargsnumber)
+	{
+		if(*(spaceargs[i]) == '\'')
+		{
+			tmp = spaceargs[i] + 1;
+			while (i < (spaceargsnumber - 1))
+			{
+				i++;
+				if(ft_strchr(spaceargs[i], '\''))
+				{
+					tmpjoin = ft_strjoin(tmp, " ");
+					tail = ft_strdup(spaceargs[i]);
+					tail[ft_strlen(spaceargs[i]) - 1] = '\0';
+					tmp = ft_strjoin(tmpjoin, tail);
+					free(tmpjoin);
+					free(tail);
+					break ;
+				}
+				else
+				{
+					tmpjoin = ft_strjoin(tmp, " ");
+					tmp = ft_strjoin(tmpjoin, spaceargs[i]);
+					free(tmpjoin);
+				}
+				tmp = tmpjoin;
+			}
+			args[j] = tmp;
+			j++;
+		}
+		else
+		{
+			args[j] = ft_strdup(spaceargs[i]);
+			j++;
+		}
+		i++;
+	}
+	args[j] = NULL;
+	while (i > j)
+	{
+		//free(args[i]);
+		i--;
+	}
+	i = spaceargsnumber - 1;
+	while (i >= 0)
+	{
+		//free(spaceargs[i]);
+		i--;
+	}
+	//free(spaceargs);
+	return (args);
+}
+
 
 int opener(char *filename)
 {
@@ -231,7 +173,7 @@ int opener(char *filename)
 }
 
 
-void	prtintenv(char **env)
+void	ft_putallenv(char **env)
 {
 	int	envdx;
 	char	*print;
@@ -254,7 +196,7 @@ char *ft_get_envline(char *needle, char **envp)
 	char	*pthl_start;
 
 	envdx = 0;
-	while (envp[envdx] != 0)
+	while (envp[envdx] != NULL)
 	{
 		pthl_start = ft_strstr(envp[envdx], needle);
 		if (pthl_start == envp[envdx])
@@ -293,9 +235,13 @@ char	*ft_exc_path(char *exc, char **envp)
 		paths = ft_split(pathline, ':');
 		while (i < pathcount)
 		{
+			printf("---\n");
+			printf("%s\n", paths[i]);
+			printf("%s\n", exc);
 			joined = ft_strjoin(paths[i], exc);
 			if(joined == NULL)
 				break ;
+
 			if (access(joined, X_OK) == 0) {
 				//free(pathline);
 				j = 0;
@@ -354,12 +300,10 @@ char	*retrieve_bsc_command(char *full_command, char *prefix, char *suffix)
 
 char	**ft_exc_args(char *full_command, char *command)
 {
-	if(command == "awk")
+	if(ft_strcmp(command, "awk") == 0)
 		return ft_exc_args_awk(full_command);
 	else
-	{
-		
-	}
+		return ft_split(full_command, ' ');
 }
 
 int main(int argc, char **argv, char **envp)
@@ -367,11 +311,10 @@ int main(int argc, char **argv, char **envp)
 	int fd_in;
 	int fd_out;
 	int cmd_i;
-	//int	fd[2];
-	//int pid;
-	//int prev_pfd;
+	int	fd[2];
+	int pid;
+	int prev_pfd;
 
-	prtintenv(envp);
 	if (argc < 5)
 	{
 		ft_printf("\033[31margs must follow the order: [inputfile] [comand1] ... [commandn] [outputfile]\033[0m\n");
@@ -381,64 +324,44 @@ int main(int argc, char **argv, char **envp)
 	fd_out = opener(argv[4]);
 	cmd_i = 2;
 	// unterstuetze auch den fall wenn kein inputfile existiert infile cat wc-l +> 0
-	ft_printf("%i %i\n", fd_in, fd_out);
+	//ft_printf("%i %i\n", fd_in, fd_out);
 	if (fd_in >= 0 && fd_out >= 1)
 	{
-		//prev_pfd = fd_in;
+		prev_pfd = fd_in;
 		while (cmd_i < (argc - 1))
 		{
-			ft_printf("DO SHIT: %s\n", argv[cmd_i]);
-		//	if (pipe(fd) == -1)
-		//	{
-		//		perror("pipe");
-		//		exit(EXIT_FAILURE);
-		//	}
-		//	pid = fork();
-		//	if (pid == -1)
-		//	{
-		//		perror("fork");
-		//		exit(EXIT_FAILURE);
-		//	}
-		//	if (pid == 0)
-		//	{
-		//		dup2(prev_pfd, STDIN_FILENO);
-		//		if(cmd_i < argc - 2)
-		//			dup2(fd[1], STDOUT_FILENO);
-		//		else
-		//			dup2(fd_out, STDOUT_FILENO);
-		//		close(fd[0]);
-		//		close(fd[1]);
-
-	//		char *args[3];
- //
-	//args[0] = "ls";
-	//args[1] = "-l";
-	//args[2] = NULL;
-	//execve("/bin/ls", args, NULL);
-	//printf("This line will not be executed.\n");
-		ft_printf(retrieve_bsc_command(argv[cmd_i], "", ""));
-		ft_printf("\n");
-		ft_printf(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "/", ""), envp));
-		ft_printf("\n");
-		// ft_exc_args(argv[cmd_i])
-		//free(command);
-		//execve(ft_exc_path(argv[cmd_i], envp), ft_exc_args(argv[cmd_i]), envp);
-		char** exargs = ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", ""));
-		int g = 0;
-		while (exargs[g] != 0)
-		{
-			ft_printf(exargs[g]);
-			ft_printf("\n");
-			g++;
-		}
-		//execve(, array argv[1]);
-		//		perror("exec failed");
-		//		exit(EXIT_FAILURE);
-		//	}
-		//	close(fd[1]);
-		//	if (prev_pfd != fd_in)
-		//		close(prev_pfd);
-		//	prev_pfd = fd[0];
+			if (pipe(fd) == -1)
+			{
+				perror("pipe");
+				exit(EXIT_FAILURE);
+			}
+			pid = fork();
+			if (pid == -1)
+			{
+				perror("fork");
+				exit(EXIT_FAILURE);
+			}
+			if (pid == 0)
+			{
+				dup2(prev_pfd, STDIN_FILENO);
+				if(cmd_i < argc - 2)
+					dup2(fd[1], STDOUT_FILENO);
+				else
+					dup2(fd_out, STDOUT_FILENO);
+				close(fd[0]);
+				close(fd[1]);
+				if(execve(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "", ""), envp), ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", "")), envp) == -1)
+				{
+					perror("execve");
+					return (EXIT_FAILURE);
+				}
+				return (EXIT_SUCCESS);
+		
+			}
+			close(fd[1]);
+			if (prev_pfd != fd_in)
+				close(prev_pfd);
+			prev_pfd = fd[0];
 			cmd_i++;
 		}
 		wait(NULL);

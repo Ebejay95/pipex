@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
+#    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/27 18:59:48 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/04 22:50:07 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/05/08 12:30:20 by jeberle          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -98,7 +98,7 @@ all: $(LIBFT_LIB) $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -MMD -c $< -o $@
+	@$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 $(LIBFT_LIB):
 	@git submodule update --init --recursive --remote > /dev/null 2>&1
