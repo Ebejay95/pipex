@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/08 16:29:06 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/11 04:50:07 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/pipex.h"
 #include <stdio.h>
+
 
 char *get_file_content(char *filename)
 {
@@ -27,6 +28,7 @@ char *get_file_content(char *filename)
 		ft_printf("File %s does not exist, or cannot be read from\n", filename);
 		return (filecontent);
 	}
+		ft_printf("%i\n", fd);
 	line = get_next_line(fd);
 	while (line != NULL)
 	{
@@ -37,8 +39,8 @@ char *get_file_content(char *filename)
 			close(fd);
 			return (filecontent);
 		}
-		free(filecontent);
 		ft_strcpy(tmp, filecontent);
+		free(filecontent);
 		ft_strcat(tmp, line);
 		filecontent = tmp;
 		free(line);
@@ -48,30 +50,37 @@ char *get_file_content(char *filename)
 	return (filecontent);
 }
 
-int	ft_array_length(char **array)
+char *get_file_content_fd(int fd)
 {
-	int	length;
+	char	*filecontent;
+	char	*tmp;
+	char	*line;
 
-	length = 0;
-	while (array[length] != NULL)
-		length++;
-	return (length);
-}
-
-void	ft_array_free(char **array)
-{
-	int	length;
-
-	if(array == NULL)
-		return ;
-	length = ft_array_length(array);
-	length--;
-	while (length >= 0 && array[length] != NULL)
+	filecontent = ft_strdup("");
+	if (fd < 0)
 	{
-		free(array[length]);
-		length--;
+		ft_printf("Filedescriptor %s does not exist, or cannot be read\n", fd);
+		return (filecontent);
 	}
-	free(array);
+	line = get_next_line(fd);
+	while (line != NULL)
+	{
+		tmp = ft_calloc(sizeof(char), (ft_strlen(line) + ft_strlen(filecontent) + 1));
+		if(tmp == NULL)
+		{
+			free(line);
+			close(fd);
+			return (filecontent);
+		}
+		ft_strcpy(tmp, filecontent);
+		free(filecontent);
+		ft_strcat(tmp, line);
+		filecontent = tmp;
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	return (filecontent);
 }
 
 char** ft_exc_args_awk(char *full_command)
@@ -156,22 +165,6 @@ char** ft_exc_args_awk(char *full_command)
 }
 
 
-int opener(char *filename)
-{
-	int	fd;
-
-	if(filename != NULL)
-	{
-		if(access(filename, R_OK) != -1)
-		{
-			fd = open(filename, O_WRONLY | O_CREAT, 0644);
-			return (fd);
-		}
-		return (-1);
-	}
-	return (-1);
-}
-
 
 void	ft_putallenv(char **env)
 {
@@ -235,9 +228,6 @@ char	*ft_exc_path(char *exc, char **envp)
 		paths = ft_split(pathline, ':');
 		while (i < pathcount)
 		{
-			printf("---\n");
-			printf("%s\n", paths[i]);
-			printf("%s\n", exc);
 			joined = ft_strjoin(paths[i], exc);
 			if(joined == NULL)
 				break ;
@@ -311,63 +301,68 @@ int main(int argc, char **argv, char **envp)
 	int fd_in;
 	int fd_out;
 	int cmd_i;
-	int	fd[2];
-	int pid;
-	int prev_pfd;
+	int fd[2];
+	int fd_in_prev;
 
 	if (argc < 5)
 	{
 		ft_printf("\033[31margs must follow the order: [inputfile] [comand1] ... [commandn] [outputfile]\033[0m\n");
 		return (1);
 	}
-	fd_in = opener(argv[1]);
-	fd_out = opener(argv[4]);
-	cmd_i = 2;
-	// unterstuetze auch den fall wenn kein inputfile existiert infile cat wc-l +> 0
-	//ft_printf("%i %i\n", fd_in, fd_out);
-	if (fd_in >= 0 && fd_out >= 1)
+	fd_in = open(argv[1], O_RDONLY);
+	fd_out = open(argv[(argc - 1)], O_WRONLY | O_CREAT, 0644);
+	cmd_i = 3;
+
+	pipe(fd);
+	if (fork() == 0)
 	{
-		prev_pfd = fd_in;
-		while (cmd_i < (argc - 1))
-		{
-			if (pipe(fd) == -1)
-			{
-				perror("pipe");
-				exit(EXIT_FAILURE);
-			}
-			pid = fork();
-			if (pid == -1)
-			{
-				perror("fork");
-				exit(EXIT_FAILURE);
-			}
-			if (pid == 0)
-			{
-				dup2(prev_pfd, STDIN_FILENO);
-				if(cmd_i < argc - 2)
-					dup2(fd[1], STDOUT_FILENO);
-				else
-					dup2(fd_out, STDOUT_FILENO);
-				close(fd[0]);
-				close(fd[1]);
-				if(execve(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "", ""), envp), ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", "")), envp) == -1)
-				{
-					perror("execve");
-					return (EXIT_FAILURE);
-				}
-				return (EXIT_SUCCESS);
+		dup2(fd_in, 0);
+		dup2(fd[1], 1);
+		close(fd[0]);
 		
-			}
-			close(fd[1]);
-			if (prev_pfd != fd_in)
-				close(prev_pfd);
-			prev_pfd = fd[0];
-			cmd_i++;
+		if(execve(ft_exc_path(retrieve_bsc_command(argv[2], "/", ""), envp), ft_exc_args(argv[2], retrieve_bsc_command(argv[2], "", "")), envp) == -1)
+		{
+			perror("execve");
+			return (EXIT_FAILURE);
 		}
-		wait(NULL);
 	}
 	close(fd_in);
-	close(fd_out);
+	fd_in_prev = fd[0];
+	close(fd[1]);
+
+	while (cmd_i < (argc - 2))
+	{
+		pipe(fd);
+		if (fork() == 0)
+		{
+			dup2(fd_in_prev, 0);
+			dup2(fd[1], 1);
+			close(fd[0]);
+			if(execve(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "/", ""), envp), ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", "")), envp) == -1)
+			{
+				perror("execve");
+				return (EXIT_FAILURE);
+			}
+		}
+		close(fd_in_prev);
+		fd_in_prev = fd[0];
+		close(fd[1]);
+		cmd_i++;
+	}
+	if (fork() == 0)
+	{
+		dup2(fd_in_prev, 0);
+		dup2(fd_out, 1);
+		close(fd_out);
+		
+		if(execve(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "/", ""), envp), ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", "")), envp) == -1)
+		{
+			perror("execve");
+			return (EXIT_FAILURE);
+		}
+	}
+		close(fd_in_prev);
+		close(fd_out);
 	return (0);
 }
 
