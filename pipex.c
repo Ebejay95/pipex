@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/11 05:21:09 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/14 23:57:17 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,10 +300,6 @@ int main(int argc, char **argv, char **envp)
 {
 	int fd_in;
 	int fd_out;
-	int cmd_i;
-	int fd[2];
-	int fd_in_prev;
-
 	if (argc < 5)
 	{
 		ft_printf("\033[31margs must follow the order: [inputfile] [comand1] ... [commandn] [outputfile]\033[0m\n");
@@ -311,57 +307,19 @@ int main(int argc, char **argv, char **envp)
 	}
 	fd_in = open(argv[1], O_RDONLY);
 	fd_out = open(argv[(argc - 1)], O_WRONLY | O_CREAT, 0644);
-	cmd_i = 3;
-
-	pipe(fd);
-	if (fork() == 0)
-	{
-		dup2(fd_in, 0);
-		dup2(fd[1], 1);
-		close(fd[0]);
-		
-		if(execve(ft_exc_path(retrieve_bsc_command(argv[2], "/", ""), envp), ft_exc_args(argv[2], retrieve_bsc_command(argv[2], "", "")), envp) == -1)
-		{
-			perror("execve");
-			return (EXIT_FAILURE);
-		}
-	}
+	dup2(fd_in, 0);
+	dup2(fd_out, 1);
 	close(fd_in);
-	fd_in_prev = fd[0];
-	close(fd[1]);
-
-	while (cmd_i < (argc - 2))
+	close(fd_out);
+	if(execve(ft_exc_path(retrieve_bsc_command("cat", "/", ""), envp), ft_exc_args("cat", retrieve_bsc_command("cat", "", "")), envp) == -1)
 	{
-		pipe(fd);
-		if (fork() == 0)
-		{
-			dup2(fd_in_prev, 0);
-			dup2(fd[1], 1);
-			close(fd[0]);
-			if(execve(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "/", ""), envp), ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", "")), envp) == -1)
-			{
-				perror("execve");
-				return (EXIT_FAILURE);
-			}
-		}
-		close(fd_in_prev);
-		fd_in_prev = fd[0];
-		close(fd[1]);
-		cmd_i++;
+		perror("execve");
+		return (EXIT_FAILURE);
 	}
-	if (fork() == 0)
-	{
-		dup2(fd_in_prev, 0);
-		dup2(fd_out, 1);
-		close(fd_out);
-		
-		if(execve(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "/", ""), envp), ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", "")), envp) == -1)
-		{
-			perror("execve");
-			return (EXIT_FAILURE);
-		}
-	}
-		close(fd_in_prev);
-		close(fd_out);
 	return (0);
 }
+	// 		if(execve(ft_exc_path(retrieve_bsc_command(argv[cmd_i], "/", ""), envp), ft_exc_args(argv[cmd_i], retrieve_bsc_command(argv[cmd_i], "", "")), envp) == -1)
+	// 		{
+	// 			perror("execve");
+	// 			return (EXIT_FAILURE);
+	// 		}
