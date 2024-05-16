@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 10:06:49 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/16 08:31:11 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/16 18:01:16 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,5 +110,14 @@ int	ft_execve(char *command, char **envp)
 
 	path = ft_exc_path(retrieve_bsc_command(command, "/", ""), envp);
 	args = ft_exc_args(command, retrieve_bsc_command(command, "", ""));
-	return (execve(path, args, envp));
+	if (execve(path, args, envp) == -1)
+	{
+		ft_putstr_fd(STDERR_FILENO, "Error executing:\n");
+		ft_putstr_fd(STDERR_FILENO, path);
+		ft_putstr_fd(STDERR_FILENO, "\n");
+		if (errno == ENOENT)
+			return (127);
+		return (EXIT_FAILURE);
+	}
+	return (0);
 }

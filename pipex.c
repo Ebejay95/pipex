@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/16 12:27:12 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/16 18:24:08 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,18 @@ int	main(int argc, char **argv, char **envp)
 	int	prevpipe;
 	int	process;
 	int	i;
+	int	status;
+	int	exitcode;
 
 	if (argc < 5)
 	{
 		ft_putstr_fd(STDERR_FILENO, "[input] [cmd1] ... [cmdn] [output]\n");
 		return (1);
+	}
+	if (ft_strcmp(argv[1], "here_doc") == 0)
+	{
+		ft_printf("here_doc\n");
+		return (0);
 	}
 	if (opern_in_out(argc, argv, &fd_in, &fd_out) == -1)
 		return (ft_putstr_fd(STDERR_FILENO, "Error opening file\n"), 1);
@@ -60,9 +67,7 @@ int	main(int argc, char **argv, char **envp)
 				dup2(fd_out, 1);
 			close(tube[0]);
 			close(tube[1]);
-			ft_execve(argv[i], envp);
-			ft_putstr_fd(STDERR_FILENO, "Error executing\n");
-			exit(EXIT_FAILURE);
+			exit(ft_execve(argv[i], envp));
 		}
 		else
 		{
@@ -70,7 +75,9 @@ int	main(int argc, char **argv, char **envp)
 			if (prevpipe != fd_in)
 				close(prevpipe);
 			prevpipe = tube[0];
-			waitpid(process, NULL, 0);
+			wait(&status);
+			if (WIFEXITED(status))
+				exitcode = WIFEXITED(status);
 		}
 		i++;
 	}

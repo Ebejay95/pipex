@@ -6,7 +6,7 @@
 #    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/27 18:59:48 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/15 10:58:30 by jeberle          ###   ########.fr        #
+#    Updated: 2024/05/16 17:10:50 by jeberle          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -95,6 +95,8 @@ OBJECTS := $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.o))
 .PHONY: all clean fclean re libft
 
 all: $(LIBFT_LIB) $(NAME)
+
+bonus: all
 
 -include $(OBJECTS:.o=.d)
 

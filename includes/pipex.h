@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:52 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/15 10:48:26 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/16 18:01:27 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PIPEX_H
 
 # include <fcntl.h>
+# include <errno.h>
 # include "./../libft/libft.h"
 
 char	**ft_exc_args_awk(char *full_cmd);
