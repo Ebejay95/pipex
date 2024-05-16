@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 10:06:49 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/15 16:55:15 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/16 08:31:11 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,29 @@
 
 char	**ft_exc_args_awk(char *full_command)
 {
-	int	spaceargsnumber;
-	char **spaceargs;
-	char **args;
-	char *concat;
-	char *tmp;
-	int	i;
+	char	**spaceargs;
+	char	**args;
+	char	*concat;
+	char	*tmp;
+	int		i;
+
 	i = 1;
-	//ft_printf(full_command);
 	args = malloc(3 * sizeof(char *));
-	if(args == NULL)
+	if (args == NULL)
 		return (NULL);
-	spaceargsnumber = ft_count_words(full_command, ' ');
 	spaceargs = ft_split(full_command, ' ');
 	args[0] = ft_strdup(spaceargs[0]);
 	concat = ft_strdup("");
-	while (i < spaceargsnumber && spaceargs[i])
+	while (i < ft_array_length(spaceargs) && spaceargs[i])
 	{
-		tmp = ft_strjoin(concat ,spaceargs[i]);
+		tmp = ft_strjoin(concat, spaceargs[i]);
 		free(concat);
 		concat = tmp;
 		i++;
 	}
 	args[1] = ft_strtrim(concat, " '");
 	args[2] = NULL;
-	ft_array_l_free(spaceargs, spaceargsnumber);
+	ft_array_l_free(spaceargs, ft_array_length(spaceargs));
 	return (args);
 }
 
