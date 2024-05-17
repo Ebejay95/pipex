@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 10:47:51 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/17 03:11:45 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/17 03:08:43 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,35 @@ char	*ft_exc_path(char *exc, char **envp)
 	int		i;
 
 	pathline = ft_get_envline("PATH", envp);
+	if (!pathline)
+		return (NULL);
 	pathcount = ft_count_words(pathline, ':');
 	paths = ft_split(pathline, ':');
-	if (pathline != NULL)
+	if (!paths)
+		return (NULL);
+	i = 0;
+	while (i < pathcount)
 	{
-		i = 0;
-		while (i < pathcount)
+		joined = ft_strjoin(paths[i], "/");
+		if (joined == NULL)
 		{
-			joined = ft_strjoin(paths[i], exc);
-			if (joined == NULL)
-				break ;
-			if (access(joined, X_OK) == 0)
-				return (ft_array_l_free(paths, pathcount), joined);
-			i++;
-			free(joined);
+			ft_array_l_free(paths, pathcount);
+			return (NULL);
 		}
+		joined = ft_strjoin(joined, exc);
+		if (joined == NULL)
+		{
+			ft_array_l_free(paths, pathcount);
+			return (NULL);
+		}
+		if (access(joined, X_OK) == 0)
+		{
+			ft_array_l_free(paths, pathcount);
+			return (joined);
+		}
+		free(joined);
+		i++;
 	}
-	return (ft_array_l_free(paths, pathcount), NULL);
+	ft_array_l_free(paths, pathcount);
+	return (NULL);
 }
