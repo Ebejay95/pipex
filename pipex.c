@@ -3,19 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/16 12:27:12 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/18 17:28:13 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "./includes/pipex.h"
 
 #include "./includes/pipex.h"
 
 int	opern_in_out(int argc, char **argv, int *fd_in, int *fd_out)
 {
 	*fd_in = open(argv[1], O_RDONLY);
-	*fd_out = open(argv[(argc - 1)], O_WRONLY | O_CREAT, 0644);
+	*fd_out = open(argv[(argc - 1)], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (*fd_in == -1 || *fd_out == -1)
 		return (-1);
 	return (0);
@@ -30,6 +32,7 @@ int	main(int argc, char **argv, char **envp)
 	int	prevpipe;
 	int	process;
 	int	i;
+	int	processes[OPEN_MAX];
 
 	if (argc < 5)
 	{
@@ -66,11 +69,11 @@ int	main(int argc, char **argv, char **envp)
 		}
 		else
 		{
+			processes[i - 2] = process;
 			close(tube[1]);
 			if (prevpipe != fd_in)
 				close(prevpipe);
 			prevpipe = tube[0];
-			waitpid(process, NULL, 0);
 		}
 		i++;
 	}
@@ -78,5 +81,11 @@ int	main(int argc, char **argv, char **envp)
 		close(prevpipe);
 	close(fd_in);
 	close(fd_out);
+	i = 0;
+	while (i < argc - 3)
+	{
+		waitpid(processes[i], NULL, 0);
+		i++;
+	}
 	return (0);
 }
