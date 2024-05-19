@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/18 20:14:33 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/18 21:39:53 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,18 @@
 
 #include "./includes/pipex.h"
 
-int	opern_in_out(int argc, char **argv, int *fd_in, int *fd_out)
+int	open_in_out(int argc, char **argv, int *fd_in, int *fd_out)
 {
-	*fd_in = open(argv[1], O_RDONLY);
-	*fd_out = open(argv[(argc - 1)], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (*fd_in == -1 || *fd_out == -1)
-		return (-1);
+	if ()
+	{
+	}
+	else
+	{
+		*fd_in = open(argv[1], O_RDONLY);
+		*fd_out = open(argv[(argc - 1)], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (*fd_in == -1 || *fd_out == -1)
+			return (-1);
+	}
 	return (0);
 }
 
@@ -39,9 +45,13 @@ int	main(int argc, char **argv, char **envp)
 		ft_putstr_fd(STDERR_FILENO, "[input] [cmd1] ... [cmdn] [output]\n");
 		return (1);
 	}
-	if (opern_in_out(argc, argv, &fd_in, &fd_out) == -1)
+	if (open_in_out(argc, argv, &fd_in, &fd_out) == -1)
 		return (ft_putstr_fd(STDERR_FILENO, "Error opening file\n"), 1);
-	i = 2;
+
+	if (ft_strcmp(argv[1], "here_doc") == 0)
+		i = 3; /* Skip "here_doc" and LIMITER */
+	else
+		i = 2;
 	prevpipe = fd_in;
 	while (i < (argc - 1))
 	{
