@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:52 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/20 07:18:37 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/22 15:49:05 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <fcntl.h>
 # include <errno.h>
+# include <sys/wait.h>
 # include <stdio.h>
 # include "./../libft/libft.h"
 # define MAX_BYTES 8000

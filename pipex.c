@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/20 09:18:32 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/22 15:47:32 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int	main(int argc, char **argv, char **envp)
 	int	prevpipe;
 	int	process;
 	int	i;
-	int	processes[OPEN_MAX];
+	int	processes[1024];
 
 	if (argc < 5)
 	{
