@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkauker <jkauker@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:52 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/23 10:22:55 by jkauker          ###   ########.fr       */
+/*   Updated: 2024/05/23 19:45:41 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <errno.h>
 # include <sys/wait.h>
 # include <stdio.h>
+# include <string.h>
 # include "./../libft/libft.h"
 
 typedef struct s_args
@@ -28,8 +29,8 @@ typedef struct s_args
 
 typedef struct s_fds
 {
-	int		fd_in;
-	int		fd_out;
+	int		in;
+	int		out;
 	int		tube[2];
 	int		prevpipe;
 }	t_fds;
@@ -45,8 +46,8 @@ char	*ft_exc_path(char *exc, char **envp);
 char	*retrieve_bsc_command(char *full_cmd, char *prefix, char *suffix);
 char	**ft_exc_args(char *full_cmd);
 int		ft_execve(char *command, char **envp);
-void	wait_handling(t_args *args, t_processes *prcs);
-void	child_process(t_fds *fds, t_args *args, char **envp);
+int		wait_handling(t_args *args, t_processes *prcs);
+int		child_process(t_fds *fds, t_args *args, char **envp);
 void	main_process(t_processes *prcs, t_fds *fds, t_args *args);
 void	do_pipe_act(t_processes *prcs, t_fds *fds, t_args *args, char **envp);
 int		prepare_piping(t_processes *prcs, t_fds *fds);

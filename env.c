@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 10:47:51 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/23 13:49:46 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/23 18:35:21 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,6 @@ char	*ft_exc_path(char *exc, char **envp)
 			free(joined);
 		}
 	}
-	return (ft_array_l_free(paths, pathcount), NULL);
+	ft_array_l_free(paths, pathcount);
+	return (NULL);
 }

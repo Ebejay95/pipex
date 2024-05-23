@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 10:06:49 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/20 07:18:21 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/23 19:37:54 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,26 +70,57 @@ char	*retrieve_bsc_command(char *full_cmd, char *prefix, char *suffix)
 	return (command);
 }
 
-char	**ft_exc_args(char *full_cmd)
+char	**ft_exc_args(char *full_cmd, int *arglen)
 {
-	return (ft_split(full_cmd, ' '));
+	char	**args;
+	char	*tmp;
+
+	if (ft_strchr(full_cmd, '\"'))
+	{
+		*arglen = ft_count_words(full_cmd, '\"');
+		args = ft_split(full_cmd, '\"');
+	}
+	else if (ft_strchr(full_cmd, '\''))
+	{
+		*arglen = ft_count_words(full_cmd, '\'');
+		args = ft_split(full_cmd, '\'');
+	}
+	else
+	{
+		*arglen = ft_count_words(full_cmd, ' ');
+		args = ft_split(full_cmd, ' ');
+	}
+	tmp = ft_strtrim(args[0], " ");
+	args[0] = tmp;
+	free(tmp);
+	return (args);
 }
 
 int	ft_execve(char *command, char **envp)
 {
 	char	*path;
 	char	**args;
+	int		arglen;
 
 	path = ft_exc_path(retrieve_bsc_command(command, "/", ""), envp);
-	args = ft_exc_args(command);
+	if (!path)
+	{
+		ft_putstr_fd(STDERR_FILENO, "Command not found\n");
+		return (127);
+	}
+	args = ft_exc_args(command, &arglen);
 	if (execve(path, args, envp) == -1)
 	{
 		ft_putstr_fd(STDERR_FILENO, "Error executing:\n");
 		ft_putstr_fd(STDERR_FILENO, path);
 		ft_putstr_fd(STDERR_FILENO, "\n");
+		free(path);
+		ft_array_l_free(args, arglen);
 		if (errno == ENOENT)
 			return (127);
 		return (EXIT_FAILURE);
 	}
+	free(path);
+	ft_array_l_free(args, arglen);
 	return (0);
 }
