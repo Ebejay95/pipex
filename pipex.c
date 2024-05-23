@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/22 15:47:32 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/23 13:51:40 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,26 +39,30 @@ int	save_hd_input(char **argv)
 	return (0);
 }
 
-int	open_in_out(int argc, char **argv, int *fd_in, int *fd_out)
+int	open_in_out(t_args *a, t_fds *fds)
 {
-	if (ft_strcmp(argv[1], "here_doc") == 0)
+	if (ft_strcmp(a->v[1], "here_doc") == 0)
 	{
-		if (save_hd_input(argv) == -1)
+		if (a->c < 6)
+			return (ft_putstr_fd(2, "hd lim [in] [cmd1] . [cmdn] [out]\n"), -1);
+		if (save_hd_input(a->v) == -1)
 			return (-1);
-		*fd_in = open("hd.tmp", O_RDONLY);
-		if (*fd_in == -1)
+		fds->fd_in = open("hd.tmp", O_RDONLY);
+		if (fds->fd_in == -1)
 			return (-1);
 	}
 	else
 	{
-		*fd_in = open(argv[1], O_RDONLY);
-		if (*fd_in == -1)
+		fds->fd_in = open(a->v[1], O_RDONLY);
+		if (fds->fd_in == -1)
 			return (-1);
+		if (a->c < 5)
+			return (ft_putstr_fd(2, "[in] [cmd1] . [cmdn] [out]\n"), -1);
 	}
-	*fd_out = open(argv[(argc - 1)], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (*fd_out == -1)
+	fds->fd_out = open(a->v[(a->c - 1)], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fds->fd_out == -1)
 	{
-		close(*fd_in);
+		close(fds->fd_in);
 		return (-1);
 	}
 	return (0);
@@ -71,89 +75,41 @@ int	get_initial_index(char **argv)
 	return (2);
 }
 
-void	wait_handling(int argc, char **argv, int processes[])
+int	clear_end(t_args *a, t_fds *fds)
 {
-	int	i;
-
-	i = 0;
-	if (ft_strcmp(argv[1], "here_doc") == 0)
+	if (fds->prevpipe != -1)
+		close(fds->prevpipe);
+	close(fds->fd_in);
+	close(fds->fd_out);
+	if (ft_strcmp(a->v[1], "here_doc") == 0)
 	{
-		while (i < argc - 4)
-		{
-			waitpid(processes[i], NULL, 0);
-			i++;
-		}
+		if (unlink("hd.tmp") == -1)
+			return (ft_putstr_fd(STDERR_FILENO, "Error deleting tmp\n"), -1);
 	}
-	else
-	{
-		while (i < argc - 3)
-		{
-			waitpid(processes[i], NULL, 0);
-			i++;
-		}
-	}
+	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	int	fd_in;
-	int	fd_out;
-	int	tube[2];
-	int	prevpipe;
-	int	process;
-	int	i;
-	int	processes[1024];
+	t_fds		fds;
+	t_processes	prcs;
+	t_args		args;
 
-	if (argc < 5)
-	{
-		ft_putstr_fd(STDERR_FILENO, "[input] [cmd1] ... [cmdn] [output]\n");
-		return (1);
-	}
-	if (open_in_out(argc, argv, &fd_in, &fd_out) == -1)
+	args.c = argc;
+	args.v = argv;
+	if (open_in_out(&args, &fds) == -1)
 		return (ft_putstr_fd(STDERR_FILENO, "Error opening file\n"), 1);
-	i = get_initial_index(argv);
-	prevpipe = fd_in;
-	while (i < (argc - 1))
+	args.i = get_initial_index(args.v);
+	fds.prevpipe = fds.fd_in;
+	while (args.i < (args.c - 1))
 	{
-		if (pipe(tube) == -1)
-			return (ft_putstr_fd(STDERR_FILENO, "Error opening pipe\n"), 1);
-		process = fork();
-		if (process == -1)
-			return (ft_putstr_fd(STDERR_FILENO, "Error forking\n"), 1);
-		if (process == 0)
-		{
-			if (prevpipe != -1)
-			{
-				dup2(prevpipe, 0);
-				close(prevpipe);
-			}
-			if (i < (argc - 2))
-				dup2(tube[1], 1);
-			else
-				dup2(fd_out, 1);
-			close(tube[0]);
-			close(tube[1]);
-			ft_execve(argv[i], envp);
-			ft_putstr_fd(STDERR_FILENO, "Error executing\n");
-			exit(EXIT_FAILURE);
-		}
-		else
-		{
-			if (ft_strcmp(argv[1], "here_doc") == 0)
-				processes[i - 3] = process;
-			else
-				processes[i - 2] = process;
-			close(tube[1]);
-			if (prevpipe != fd_in)
-				close(prevpipe);
-			prevpipe = tube[0];
-		}
-		i++;
+		if (prepare_piping(&prcs, &fds) == 1)
+			return (1);
+		do_pipe_act(&prcs, &fds, &args, envp);
+		args.i++;
 	}
-	if (prevpipe != -1)
-		close(prevpipe);
-	close(fd_in);
-	close(fd_out);
-	wait_handling(argc, argv, processes);
+	if (clear_end(&args, &fds) != 0)
+		return (-1);
+	wait_handling(&args, &prcs);
 	return (0);
 }

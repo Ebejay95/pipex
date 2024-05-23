@@ -15,28 +15,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-char	*ft_quote(char *str)
-{
-	char	*quote;
-	size_t	len;
-	size_t	str_len;
-
-	if (!str)
-		return (NULL);
-	str_len = ft_strlen(str);
-	if (str[0] == '"' && str[str_len - 1] == '"')
-		return (ft_strdup(str));
-	len = str_len + 3;
-	quote = (char *)malloc(len * sizeof(char));
-	if (!quote)
-		return (NULL);
-	quote[0] = '"';
-	ft_strcpy(&quote[1], str);
-	quote[len - 2] = '"';
-	quote[len - 1] = '\0';
-	return (quote);
-}
-
 char	*ft_get_envline(char *needle, char **envp)
 {
 	int		envdx;
