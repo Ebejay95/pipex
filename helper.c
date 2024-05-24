@@ -3,68 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   helper.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 10:19:27 by jkauker           #+#    #+#             */
-/*   Updated: 2024/05/23 19:50:22 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/24 14:16:17 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/pipex.h"
-
-int	wait_handling(t_args *args, t_processes *prcs)
-{
-	int	i;
-	int	status;
-	int	exit_code;
-
-	status = 0;
-	exit_code = 0;
-	i = 0;
-	if (ft_strcmp(args->v[1], "here_doc") == 0)
-	{
-		while (i < args->c - 4)
-		{
-			if (waitpid(prcs->track[i], &status, 0) == -1)
-			{
-				perror("Error waiting for process");
-				exit_code = EXIT_FAILURE;
-			}
-			if (WIFEXITED(status))
-			{
-				exit_code = WEXITSTATUS(status);
-			}
-			else if (WIFSIGNALED(status))
-			{
-				// TODO Singal delete tmp file
-				exit_code = 128 + WTERMSIG(status);
-			}
-			i++;
-		}
-	}
-	else
-	{
-		while (i < args->c - 3)
-		{
-			if (waitpid(prcs->track[i], &status, 0) == -1)
-			{
-				perror("Error waiting for process");
-				exit_code = EXIT_FAILURE;
-			}
-			if (WIFEXITED(status))
-			{
-				exit_code = WEXITSTATUS(status);
-			}
-			else if (WIFSIGNALED(status))
-			{
-				// TODO Singal delete tmp file
-				exit_code = 128 + WTERMSIG(status);
-			}
-			i++;
-		}
-	}
-	return (exit_code);
-}
 
 int	child_process(t_fds *fds, t_args *args, char **envp)
 {

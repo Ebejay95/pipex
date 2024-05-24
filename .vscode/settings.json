@@ -2,6 +2,7 @@
 	"files.associations": {
 		"*html": "html",
 		"*twig": "html",
-		"random": "c"
+		"random": "c",
+		"pipex.h": "c"
 	}
 }

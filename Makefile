@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jkauker <jkauker@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/27 18:59:48 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/23 10:22:13 by jkauker          ###   ########.fr        #
+#    Updated: 2024/05/24 16:35:00 by jonathanebe      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,6 +81,9 @@ SRCS= \
 pipex.c \
 env.c \
 helper.c \
+helper2.c \
+wait.c \
+open.c \
 exec.c
 
 #------------------------------------------------------------------------------#

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 10:06:49 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/23 19:37:54 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/24 12:20:27 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	ft_execve(char *command, char **envp)
 	path = ft_exc_path(retrieve_bsc_command(command, "/", ""), envp);
 	if (!path)
 	{
-		ft_putstr_fd(STDERR_FILENO, "Command not found\n");
+		ft_putstr_fd(STDERR_FILENO, "pipex: Command not found\n");
 		return (127);
 	}
 	args = ft_exc_args(command, &arglen);

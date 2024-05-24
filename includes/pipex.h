@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 13:43:52 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/24 09:46:55 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/24 16:39:51 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@ typedef struct s_processes
 	int	track[1024];
 }	t_processes;
 
+int		save_hd_input(char **argv);
+int		prcss_cmmnds(t_args *args, t_fds *fds, t_processes *prcs, char **envp);
+int		clear_end(t_args *a, t_fds *fds);
+int		initialize(t_args *args, t_fds *fds, int argc, char **argv);
+int		open_in_out(t_args *a, t_fds *fds);
 char	*ft_get_envline(char *needle, char **envp);
 char	*ft_exc_path(char *exc, char **envp);
 char	*retrieve_bsc_command(char *full_cmd, char *prefix, char *suffix);
