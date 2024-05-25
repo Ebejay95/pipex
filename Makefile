@@ -6,7 +6,7 @@
 #    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/27 18:59:48 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/24 16:35:00 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/05/25 22:31:29 by jonathanebe      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -86,23 +86,35 @@ wait.c \
 open.c \
 exec.c
 
+BONUS_SRCS= \
+pipex_bonus.c \
+env_bonus.c \
+helper_bonus.c \
+helper2_bonus.c \
+wait_bonus.c \
+open_bonus.c \
+exec_bonus.c
+
 #------------------------------------------------------------------------------#
 #--------------                      OBJECTS                      -------------#
 #------------------------------------------------------------------------------#
 
 OBJECTS := $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.o))
+BONUS_OBJECTS := $(addprefix $(OBJ_DIR)/, $(BONUS_SRCS:%.c=%.o))
 
 #------------------------------------------------------------------------------#
 #--------------                      COMPILE                      -------------#
 #------------------------------------------------------------------------------#
 
-.PHONY: all clean fclean re libft
+.PHONY: all clean fclean re libft bonus
 
 all: $(LIBFT_LIB) $(NAME)
 
-bonus: all
+bonus: $(LIBFT_LIB) $(BONUS_OBJECTS)
+	@$(MAKE) $(NAME) "OBJECTS=$(BONUS_OBJECTS)"
 
 -include $(OBJECTS:.o=.d)
+-include $(BONUS_OBJECTS:.o=.d)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(@D)

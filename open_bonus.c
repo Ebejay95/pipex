@@ -1,20 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   open.c                                             :+:      :+:    :+:   */
+/*   open_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/24 14:49:53 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/05/25 22:26:54 by jonathanebe      ###   ########.fr       */
+/*   Created: 2024/05/25 22:08:30 by jonathanebe       #+#    #+#             */
+/*   Updated: 2024/05/25 22:25:32 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./includes/pipex.h"
+#include "./includes/pipex_bonus.h"
+
+int	handle_here_doc(t_args *a)
+{
+	if (save_hd_input(a->v) == -1)
+	{
+		perror("Error saving heredoc input");
+		return (-1);
+	}
+	return (open("hd.tmp", O_RDONLY));
+}
 
 int	open_input_file(t_args *a)
 {
-	return (open(a->v[1], O_RDONLY));
+	if (ft_strcmp(a->v[1], "here_doc") == 0)
+	{
+		return (handle_here_doc(a));
+	}
+	else
+	{
+		return (open(a->v[1], O_RDONLY));
+	}
 }
 
 int	open_output_file(t_args *args)

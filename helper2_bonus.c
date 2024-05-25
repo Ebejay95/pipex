@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   helper2.c                                          :+:      :+:    :+:   */
+/*   helper2_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/24 15:18:50 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/05/25 22:34:18 by jonathanebe      ###   ########.fr       */
+/*   Created: 2024/05/25 22:09:01 by jonathanebe       #+#    #+#             */
+/*   Updated: 2024/05/25 22:35:58 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./includes/pipex.h"
+#include "./includes/pipex_bonus.h"
 
 int	get_initial_index(char **argv)
 {
@@ -19,12 +19,17 @@ int	get_initial_index(char **argv)
 	return (2);
 }
 
-int	clear_end(t_fds *fds)
+int	clear_end(t_args *a, t_fds *fds)
 {
 	if (fds->prevpipe != -1)
 		close(fds->prevpipe);
 	close(fds->in);
 	close(fds->out);
+	if (ft_strcmp(a->v[1], "here_doc") == 0)
+	{
+		if (unlink("hd.tmp") == -1)
+			return (ft_putstr_fd(STDERR_FILENO, "Error deleting tmp\n"), -1);
+	}
 	return (0);
 }
 
@@ -48,10 +53,13 @@ int	initialize(t_args *args, t_fds *fds, int argc, char **argv)
 
 	args->c = argc;
 	args->v = argv;
-	if (args->c > 5)
-		return (ft_putstr_fd(2, "[in] [cmd1] [cmd2] [out]\n"), 1);
+	if (ft_strcmp(args->v[1], "here_doc") == 0)
+	{
+		if (args->c < 6)
+			return (ft_putstr_fd(2, "hd lim [cmd1] . [cmdn] [out]\n"), 1);
+	}
 	if (args->c < 5)
-		return (ft_putstr_fd(2, "[in] [cmd1] [cmd2] [out]\n"), 1);
+		return (ft_putstr_fd(2, "[in] [cmd1] . [cmdn] [out]\n"), 1);
 	if (open_in_out(args, fds) == -1)
 		return (1);
 	args->i = get_initial_index(args->v);

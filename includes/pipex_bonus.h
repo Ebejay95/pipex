@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/03 13:43:52 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/25 22:25:57 by jonathanebe      ###   ########.fr       */
+/*   Created: 2024/05/25 22:40:14 by jonathanebe       #+#    #+#             */
+/*   Updated: 2024/05/25 22:40:25 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include <fcntl.h>
 # include <errno.h>
@@ -43,7 +43,7 @@ typedef struct s_processes
 
 int		save_hd_input(char **argv);
 int		prcss_cmmnds(t_args *args, t_fds *fds, t_processes *prcs, char **envp);
-int		clear_end(t_fds *fds);
+int		clear_end(t_args *a, t_fds *fds);
 int		initialize(t_args *args, t_fds *fds, int argc, char **argv);
 int		open_in_out(t_args *a, t_fds *fds);
 char	*ft_get_envline(char *needle, char **envp);
